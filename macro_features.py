@@ -74,13 +74,21 @@ def macro_engine():
         real_z = row["real_2Y_z"]
         infl_mom_z = row["infl_mom_z"]
 
-
-        if real_z > 0.8 and slope_z > 0:
+        # score = 0
+        score = (
+        1.5 * real_z +
+        1.0 * slope_z +
+        0.5 * infl_mom_z
+    )
+        
+        
+        if score >= 1:
             return "USD strong"
-        elif real_z < -0.8 and infl_mom_z>0:
+        elif score <=-1:
             return "USD weak"
         else:
             return "neutral"
+        
     
     df["macro_fx_signal"]  = df.apply(macro_fx_signal, axis = 1)
     return df 
