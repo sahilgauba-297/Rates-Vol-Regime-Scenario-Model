@@ -19,6 +19,14 @@ cov_matrix = np.array([
 [corr * vol_2Y * vol_10Y, vol_10Y**2]
 ])
 
+# macro drift
+
+macro_signal = df["macro_score_smooth"].iloc[-1]
+drift_2Y = 0.01 * np.tanh(macro_signal)
+drift_10Y = 0.8 * drift_2Y
+
+
+
 
 # monte carlo shocks
 shocks = np.random.multivariate_normal([0,0], cov_matrix, size = 100)
@@ -34,8 +42,8 @@ for i in range(100):
 
     shock_2Y, shock_10Y = shocks[i]
 
-    new_2Y = sim_2Y[-1]  + shock_2Y
-    new_10Y = sim_10Y[-1] + shock_10Y
+    new_2Y = sim_2Y[-1]  + shock_2Y + drift_2Y
+    new_10Y = sim_10Y[-1] + shock_10Y + drift_10Y
 
     sim_2Y.append(new_2Y)
     sim_10Y.append(new_10Y)
