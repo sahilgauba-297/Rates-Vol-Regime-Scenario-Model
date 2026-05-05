@@ -67,30 +67,15 @@ def macro_engine():
 
     df = add_zscores(df)
 
-# macro fx signal
-
-    def macro_fx_signal(row):
-        slope_z = row["slope_z"]
-        real_z = row["real_2Y_z"]
-        infl_mom_z = row["infl_mom_z"]
-
-        # score = 0
-        score = (
-        1.5 * real_z +
-        1.0 * slope_z +
-        0.5 * infl_mom_z
+    #macro score
+    df["macro_score"] = (
+        1.5 * df["real_2Y_z"] +
+        1.0 * df["slope_z"] +
+        0.5 * df["infl_mom_z"]
     )
-        
-        
-        if score >= 1:
-            return "USD strong"
-        elif score <=-1:
-            return "USD weak"
-        else:
-            return "neutral"
-        
-    
-    df["macro_fx_signal"]  = df.apply(macro_fx_signal, axis = 1)
+
+    df["macro_score_smooth"] = df["macro_score"].rolling(5).mean()
+      
     return df 
 
 df = macro_engine()
